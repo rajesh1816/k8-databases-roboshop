@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: roboshop
-  name: mongodb-pvc
+  name: redis-pvc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -14,70 +14,72 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: redis-headless-svc
   namespace: roboshop
-  name: mongodb-headless-svc
   labels:
+    component: redis
     project: roboshop
-    component: mongodb
     tier: database
 spec:
-  ports:
-  - port: 27017
-    name: database
   clusterIP: None
   selector:
+    component: redis
     project: roboshop
-    component: mongodb
     tier: database
+  ports:
+  - protocol: TCP
+    port: 6379 # service port
+    targetPort: 6379 # container port
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: redis-svc
   namespace: roboshop
-  name: mongodb-svc
   labels:
+    component: redis
     project: roboshop
-    component: mongodb
     tier: database
 spec:
-  ports:
-  - port: 27017
-    name: database
   selector:
+    component: redis
     project: roboshop
-    component: mongodb
     tier: database
+  ports:
+  - protocol: TCP
+    port: 6379 # service port
+    targetPort: 6379 # container port
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongodb
+  name: redis
   namespace: roboshop
 spec:
   selector:
     matchLabels:
       project: roboshop
-      component: mongodb
+      component: redis
       tier: database
-  serviceName: "mongodb-headless-svc" # this should be headless service
+  serviceName: "redis-headless-svc" # this should be headless service
   replicas: 2 # by default is 1
   template:
     metadata:
       labels:
         project: roboshop
-        component: mongodb
+        component: redis
         tier: database
     spec:
       containers:
-      - name: mongodb
-        image: rajesh947/mongodb:v1
+      - name: redis
+        image: redis:7.0
         volumeMounts:
-        - name: mongodb
-          mountPath: /data/db
+        - name: redis
+          mountPath: /data
   # This is nothing but PVC, you can directly create here
   volumeClaimTemplates:
   - metadata:
-      name: mongodb
+      name: redis
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "roboshop"
