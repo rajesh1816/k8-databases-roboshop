@@ -62,7 +62,7 @@ spec:
       component: redis
       tier: database
   serviceName: "redis-headless-svc" # this should be headless service
-  replicas: 2 # by default is 1
+  replicas: 1 # by default is 1
   template:
     metadata:
       labels:
