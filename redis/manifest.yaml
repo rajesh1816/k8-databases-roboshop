@@ -14,41 +14,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-headless-svc
   namespace: roboshop
+  name: mongodb-headless-svc
   labels:
-    component: mongodb
     project: roboshop
+    component: mongodb
     tier: database
 spec:
+  ports:
+  - port: 27017
+    name: database
   clusterIP: None
   selector:
-    component: mongodb
     project: roboshop
+    component: mongodb
     tier: database
-  ports:
-  - protocol: TCP
-    port: 27017 # service port
-    targetPort: 27017 # container port
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-svc
   namespace: roboshop
+  name: mongodb-svc
   labels:
-    component: mongodb
     project: roboshop
+    component: mongodb
     tier: database
 spec:
-  selector:
-    component: mongodb
-    project: roboshop
-    tier: database
   ports:
-  - protocol: TCP
-    port: 27017 # service port
-    targetPort: 27017 # container port
+  - port: 27017
+    name: database
+  selector:
+    project: roboshop
+    component: mongodb
+    tier: database
 ---
 apiVersion: apps/v1
 kind: StatefulSet
