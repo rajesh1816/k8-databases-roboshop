@@ -83,6 +83,9 @@ spec:
       containers:
       - name: rabbitmq
         image: rabbitmq:3
+        envFrom:
+        - secretRef:
+            name: rabbitmq
         volumeMounts:
         - name: rabbitmq
           mountPath: /var/lib/rabbitmq
