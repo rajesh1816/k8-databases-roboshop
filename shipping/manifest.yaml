@@ -41,7 +41,7 @@ spec:
         image: rajesh947/shipping:v1
         resources:
           requests:
-            cpu: "1000m"
+            cpu: "100m"
             memory: "256Mi"
           limits:
             cpu: "200m"
